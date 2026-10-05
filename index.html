@@ -147,7 +147,7 @@ footer{margin:28px 0 30px;font-size:12px;color:var(--soft);border-top:1px solid 
   <h3>What you will do</h3>
   <ol>
     <li><b>Step 1</b> — practise on 15 faulty questions. Aim for 12 or more, and read the rewrite for each one.<span class="min">10 min</span></li>
-    <li><b>Step 2</b> — paste your questionnaire (or receive it from the builder). For <b>every flag</b>, decide: real fault or false alarm?<span class="min">15 min</span></li>
+    <li><b>Step 2</b> — <b>came from the builder?</b> Your questionnaire, project topic and analysis plan are already here. If not, paste your questionnaire and write the topic. For <b>every flag</b>, decide: real fault or false alarm?<span class="min">15 min</span></li>
     <li><b>Step 3</b> — tick the launch checklist honestly. Every unticked box is a task still to do.<span class="min">5 min</span></li>
     <li><b>Step 4</b> — add your analysis plan and run the AI pretest (three passes). Compare it with your own diagnosis.<span class="min">10 min</span></li>
     <li><b>Step 5</b> — pilot with 3–5 real people, time it on a phone, and record every change with its reason. Download the PDF.<span class="min">20 min + pilot</span></li>
@@ -175,6 +175,8 @@ footer{margin:28px 0 30px;font-size:12px;color:var(--soft);border-top:1px solid 
   <h2><span class="n">2</span> Scan your own draft</h2>
   <p class="lead">Paste the questionnaire: <b>one question per line</b>, with its options on the lines below starting with <code>-</code> (or on the same line after a colon, separated by <code>/</code>). The builder's “Part B” output is already in this format.</p>
   <div class="row noprint"><button class="btn sm alt" id="example">load an example with faults</button><span class="hint" id="importmsg"></span></div>
+  <label class="fl" for="w_project">Your project — topic and client (the same as in the scale studio and the builder)</label>
+  <input class="txt" id="w_project" placeholder="e.g. how students choose a gym — for a low-cost gym chain opening near campus">
   <label class="fl" for="w_draft">Your draft questionnaire</label>
   <textarea id="w_draft" class="capped" style="min-height:180px;max-height:460px" placeholder="1. How satisfied are you with the price and quality of our excellent products?&#10;- Satisfied&#10;- Unsatisfied&#10;2. How often do you go to the gym?&#10;- Rarely&#10;- Sometimes&#10;- Often&#10;3. Age: 18-25 / 25-35 / 35+"></textarea>
   <div class="sum" id="sum"></div>
@@ -341,7 +343,8 @@ function buildPrompt(){const Q=parse(val('w_draft'));const F=scan(Q);
   const draft=val('w_draft')||'[PASTE YOUR DRAFT QUESTIONNAIRE IN STEP 2 FIRST]';
   const flags=F.map((f,i)=>f.length?`Q${i+1}: ${f.map(x=>x[1].replace('?','')).join('; ')}`:'').filter(Boolean).join('\n');
   const plan=val('w_plan');
-  return `Act as a survey methodologist pretesting a student marketing-research questionnaire before fieldwork.
+  const proj=val('w_project');
+  return `Act as a survey methodologist pretesting a student marketing-research questionnaire before fieldwork.${proj?`\nTHE PROJECT: ${proj}`:''}
 
 MY DRAFT QUESTIONNAIRE:
 """
@@ -388,7 +391,7 @@ const EXAMPLE=`1. How satisfied are you with the price and quality of our excell
 - 4
 - 5
 10. Anything else you would like to tell us?`;
-const ids=['w_name','w_date','w_draft','w_plan','w_changes','w_final'];
+const ids=['w_name','w_date','w_project','w_draft','w_plan','w_changes','w_final'];
 let st;function save(){clearTimeout(st);st=setTimeout(()=>{const o={state};ids.forEach(i=>o[i]=val(i));
   try{localStorage.setItem(KEY,JSON.stringify(o));$('#saved').textContent='Saved ✓ '+new Date().toLocaleTimeString();}catch(_){}} ,300);}
 function autogrow(t){if(t.classList.contains('capped'))return;t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px';}
@@ -396,9 +399,13 @@ let scanT;
 (function init(){let s={};try{s=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(_){}
   if(s.state)state=Object.assign(state,s.state);
   ids.forEach(i=>{const el=document.getElementById(i);el.value=s[i]||'';el.addEventListener('input',()=>{if(el.tagName==='TEXTAREA')autogrow(el);save();
-    if(i==='w_draft'){clearTimeout(scanT);scanT=setTimeout(renderScan,250);}if(i==='w_plan')refreshPrompt();});if(el.tagName==='TEXTAREA')autogrow(el);});
+    if(i==='w_draft'){clearTimeout(scanT);scanT=setTimeout(renderScan,250);}if(i==='w_plan'||i==='w_project')refreshPrompt();});if(el.tagName==='TEXTAREA')autogrow(el);});
   let imp=null;try{imp=localStorage.getItem(IMPORT_KEY);}catch(_){}
-  if(imp){const d=$('#w_draft');if(!d.value.trim()||confirm('Replace the draft in step 2 with the questionnaire sent from the builder?')){d.value=imp;$('#importmsg').textContent='✓ Questionnaire received from the builder.';save();}try{localStorage.removeItem(IMPORT_KEY);}catch(_){}}
+  let meta=null;try{meta=JSON.parse(localStorage.getItem(IMPORT_KEY+'_meta')||'null');}catch(_){}
+  if(imp){const d=$('#w_draft');if(!d.value.trim()||confirm('Replace the draft in step 2 with the questionnaire sent from the builder?')){d.value=imp;
+      if(meta){if(meta.topic)$('#w_project').value=[meta.topic,meta.client].filter(Boolean).join(' — for ')+(meta.decision?'. Decision: '+meta.decision:'');if(meta.plan)$('#w_plan').value=meta.plan;}
+      $('#importmsg').textContent='✓ Received from the builder: your questionnaire'+(meta?', your project and your analysis plan (step 4)':'')+'.';save();}
+    try{localStorage.removeItem(IMPORT_KEY);localStorage.removeItem(IMPORT_KEY+'_meta');}catch(_){}}
   renderQuiz();renderChecks();renderScan();})();
 $('#example').onclick=()=>{const d=$('#w_draft');if(d.value.trim()&&!confirm('Replace your draft with the example?'))return;d.value=EXAMPLE;save();renderScan();};
 $('#qreset').onclick=()=>{state.quiz={};renderQuiz();save();};
