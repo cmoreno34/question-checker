@@ -401,16 +401,22 @@ let st;function save(){clearTimeout(st);st=setTimeout(()=>{const o={state};ids.f
   try{localStorage.setItem(KEY,JSON.stringify(o));$('#saved').textContent='Saved ✓ '+new Date().toLocaleTimeString();}catch(_){}} ,300);}
 function autogrow(t){if(t.classList.contains('capped'))return;t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px';}
 let scanT;
+function offer(text,onLoad,onDone){const d=document.createElement('div');d.className='fb mid noprint';d.style.margin='14px 0';
+  d.innerHTML=`<b>${text}</b><div class="row" style="margin-top:8px"><button class="btn sm" type="button">Load it</button><button class="btn sm alt" type="button">Ignore</button></div>`;
+  const [y,n]=d.querySelectorAll('button');y.onclick=()=>{onLoad();onDone();d.remove();};n.onclick=()=>{onDone();d.remove();};
+  document.querySelector('.who').before(d);d.scrollIntoView({block:'center'});}
 (function init(){let s={};try{s=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(_){}
   if(s.state)state=Object.assign(state,s.state);
   ids.forEach(i=>{const el=document.getElementById(i);el.value=s[i]||'';el.addEventListener('input',()=>{if(el.tagName==='TEXTAREA')autogrow(el);save();
     if(i==='w_draft'){clearTimeout(scanT);scanT=setTimeout(renderScan,250);}if(i==='w_plan'||i==='w_project')refreshPrompt();});if(el.tagName==='TEXTAREA')autogrow(el);});
   let imp=null;try{imp=localStorage.getItem(IMPORT_KEY);}catch(_){}
   let meta=null;try{meta=JSON.parse(localStorage.getItem(IMPORT_KEY+'_meta')||'null');}catch(_){}
-  if(imp){const d=$('#w_draft');if(!d.value.trim()||confirm('Replace the draft in step 2 with the questionnaire sent from the builder?')){d.value=imp;
+  if(imp){const load=()=>{$('#w_draft').value=imp;
       if(meta){if(meta.topic)$('#w_project').value=[meta.topic,meta.client].filter(Boolean).join(' — for ')+(meta.decision?'. Decision: '+meta.decision:'');if(meta.plan)$('#w_plan').value=meta.plan;}
-      $('#importmsg').textContent='✓ Received from the builder: your questionnaire'+(meta?', your project and your analysis plan (step 4)':'')+'.';save();}
-    try{localStorage.removeItem(IMPORT_KEY);localStorage.removeItem(IMPORT_KEY+'_meta');}catch(_){}}
+      $('#importmsg').textContent='✓ Received from the builder: your questionnaire'+(meta?', your project and your analysis plan (step 4)':'')+'.';save();renderScan();};
+    const done=()=>{try{localStorage.removeItem(IMPORT_KEY);localStorage.removeItem(IMPORT_KEY+'_meta');}catch(_){}};
+    if(!$('#w_draft').value.trim()){load();done();}
+    else setTimeout(()=>offer('Your questionnaire arrived from the builder'+(meta&&meta.topic?` (“${meta.topic}”)`:'')+'. Load it? It replaces the draft in step 2 and your analysis plan.',load,done),0);}
   renderQuiz();renderChecks();renderScan();})();
 $('#example').onclick=()=>{const d=$('#w_draft');if(d.value.trim()&&!confirm('Replace your draft with the example?'))return;d.value=EXAMPLE;save();renderScan();};
 $('#qreset').onclick=()=>{state.quiz={};renderQuiz();save();};
