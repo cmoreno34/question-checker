@@ -102,6 +102,27 @@ footer{margin:28px 0 30px;font-size:12px;color:var(--soft);border-top:1px solid 
   .printonly{display:block;margin-bottom:10px;border-bottom:2px solid #2f6b4f;padding-bottom:6px}
 }
 
+.process{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0 4px;counter-reset:p}
+@media (max-width:640px){.process{grid-template-columns:1fr 1fr}}
+.process a,.process div{display:block;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--panel);text-decoration:none;color:var(--ink);font-size:12px;line-height:1.35}
+.process b{display:block;font:700 13px Archivo;margin-bottom:2px}
+.process .k{font:700 10px Archivo;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.process [aria-current]{background:var(--leaf);border-color:transparent;color:#fff}
+.process [aria-current] .k{color:rgba(255,255,255,.8)}
+.process .off{background:var(--ground);border-style:dashed}
+.brief{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0;box-shadow:var(--shadow)}
+.brief h3{margin:0 0 6px;color:var(--leaf-ink)}
+.brief .goal{font-size:15px;margin:0 0 12px}
+.brief ol{margin:0 0 12px;padding-left:22px;font-size:13.5px}
+.brief li{margin:5px 0}
+.brief .min{display:inline-block;font:700 10.5px Archivo;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:0 7px;margin-left:4px;white-space:nowrap}
+.brief .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:640px){.brief .two{grid-template-columns:1fr}}
+.brief .two div{background:var(--ground);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px}
+.brief .two ul{margin:4px 0 0;padding-left:18px}
+.brief .next{font-size:13px;margin:12px 0 0;color:var(--soft)}
+.grp{font:700 10.5px Archivo;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin:10px 0 2px;width:100%}
+
 .flag{font-size:13px;margin:3px 0;padding-left:2px}
 .flag b{font-weight:700}
 .sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
@@ -115,10 +136,28 @@ footer{margin:28px 0 30px;font-size:12px;color:var(--soft);border-top:1px solid 
   <h1>Question checker</h1></div>
   <button class="themebtn" id="theme">◐ Theme</button>
 </header>
-<nav class="suite" aria-label="Tema 5 tools"><span style="align-self:center;font-weight:700">Tema 5 tools:</span><a href="https://cmoreno34.github.io/scale-studio/">Scale studio</a><a href="https://cmoreno34.github.io/question-checker/" aria-current="page">Question checker</a><a href="https://cmoreno34.github.io/questionnaire-builder/">Questionnaire builder</a></nav>
+<nav class="process" aria-label="Tema 5 — the questionnaire process"><a href="https://cmoreno34.github.io/scale-studio/"><span class="k">Practical 1</span><b>Scale studio</b>Decide how to measure each concept</a><a href="https://cmoreno34.github.io/questionnaire-builder/"><span class="k">Practical 2</span><b>Questionnaire builder</b>Draft the questionnaire with AI — your decisions</a><a href="https://cmoreno34.github.io/question-checker/" aria-current="page"><span class="k">Practical 3</span><b>Question checker</b>Find and fix the faults, pretest it</a><div class="off"><span class="k">Then</span><b>Pilot &amp; launch</b>3–5 real people, time it on a phone, field it</div></nav>
 <div class="printonly"><div style="font:700 11px Archivo;letter-spacing:.1em;text-transform:uppercase;color:#2f6b4f">Estudios de Mercado I · Tema 5 — Question checker worksheet</div></div>
 
 <p class="sub"><b>A leading question asked of 10,000 people is still leading.</b> Train your eye on faulty questions first, then scan your own draft, tick the launch checklist and run an AI pretest. The scanner <b>flags</b> what may be wrong — <b>you</b> decide whether it is.</p>
+
+<section class="brief noprint">
+  <h3>What this practical is for</h3>
+  <p class="goal">To train your eye to spot faulty questions (5.3) and response biases (5.5), then <b>pretest your own questionnaire before fieldwork</b> (5.6–5.7) — because a bigger sample never fixes a bad question.</p>
+  <h3>What you will do</h3>
+  <ol>
+    <li><b>Step 1</b> — practise on 15 faulty questions. Aim for 12 or more, and read the rewrite for each one.<span class="min">10 min</span></li>
+    <li><b>Step 2</b> — paste your questionnaire (or receive it from the builder). For <b>every flag</b>, decide: real fault or false alarm?<span class="min">15 min</span></li>
+    <li><b>Step 3</b> — tick the launch checklist honestly. Every unticked box is a task still to do.<span class="min">5 min</span></li>
+    <li><b>Step 4</b> — add your analysis plan and run the AI pretest (three passes). Compare it with your own diagnosis.<span class="min">10 min</span></li>
+    <li><b>Step 5</b> — pilot with 3–5 real people, time it on a phone, and record every change with its reason. Download the PDF.<span class="min">20 min + pilot</span></li>
+  </ol>
+  <div class="two">
+    <div><b>What you hand in</b><ul><li>The PDF: the flags you accepted or rejected, with reasons.</li><li>The checklist.</li><li>Your changes, final number of questions and timed length.</li></ul></div>
+    <div><b>How it is marked</b><ul><li>Rejecting a false alarm with a good reason counts as much as fixing a real fault.</li><li>The faults you fixed that the scanner missed.</li><li>Evidence of the pilot — what real people stumbled on.</li></ul></div>
+  </div>
+  <p class="next"><b>Before →</b> the <a href="https://cmoreno34.github.io/questionnaire-builder/">questionnaire builder</a>. <b>After →</b> pilot it, fix it, and launch it on your platform.</p>
+</section>
 
 <div class="who">
   <label>Name / group <input id="w_name" placeholder="Group 3 — A. García"></label>
