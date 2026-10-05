@@ -157,6 +157,7 @@ footer{margin:28px 0 30px;font-size:12px;color:var(--soft);border-top:1px solid 
     <div><b>How it is marked</b><ul><li>Rejecting a false alarm with a good reason counts as much as fixing a real fault.</li><li>The faults you fixed that the scanner missed.</li><li>Evidence of the pilot — what real people stumbled on.</li></ul></div>
   </div>
   <p class="next"><b>Before →</b> the <a href="https://cmoreno34.github.io/questionnaire-builder/">questionnaire builder</a>. <b>After →</b> pilot it, fix it, and launch it on your platform.</p>
+  <p class="next"><b>Working over several days?</b> Everything saves itself in this browser. On a shared computer, or to switch computer, use <b>💾 Save my work</b> at the bottom of the page and, next time, <b>📂 Open saved work</b>.</p>
 </section>
 
 <div class="who">
@@ -215,9 +216,13 @@ footer{margin:28px 0 30px;font-size:12px;color:var(--soft);border-top:1px solid 
 
 <div class="bar">
   <button class="pdf" id="pdf">⬇ Download PDF</button>
+  <button class="ghost" id="savework" title="Download a file with everything you have done, to continue on another day or another computer">💾 Save my work</button>
+  <button class="ghost" id="openwork" title="Open a file saved with Save my work">📂 Open saved work</button>
+  <input type="file" id="workfile" accept=".json,application/json" style="display:none">
   <button class="ghost" id="clear">Clear worksheet</button>
   <span class="saved" id="saved">Saved in this browser</span>
 </div>
+<p class="hint noprint" style="margin-top:2px"><b>To continue another day:</b> your work saves itself in <b>this browser</b> on <b>this computer</b>. On a shared or university computer, or to switch computer, press <b>💾 Save my work</b> — it downloads a small file. Next time, open this page and press <b>📂 Open saved work</b> to pick up exactly where you left off. The <b>PDF</b> is what you hand in; the saved file is only for you.</p>
 <footer>Estudios de Mercado I · Tema 5 · The scanner uses wording rules, so it raises false alarms and misses things. It is a second pair of eyes, not a verdict.</footer>
 </div>
 
@@ -416,5 +421,28 @@ $('#copyprompt').onclick=e=>copy(buildPrompt(),e.currentTarget);
 $('#pdf').onclick=()=>{if(!val('w_date'))$('#w_date').value=new Date().toLocaleDateString();window.print();};
 $('#clear').onclick=()=>{if(confirm('Clear the worksheet? Download your PDF first if you need it.')){try{localStorage.removeItem(KEY);}catch(_){}location.reload();}};
 const root=document.documentElement;$('#theme').onclick=()=>{const c=root.getAttribute('data-theme');root.setAttribute('data-theme',c==='dark'?'light':c==='light'?'dark':(matchMedia('(prefers-color-scheme:dark)').matches?'light':'dark'));};
+
+/* ---------- save my work to a file / open it again ---------- */
+(function(){
+  const APP=document.title;
+  function stamp(){const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}`;}
+  document.getElementById('savework').onclick=e=>{const btn=e.currentTarget;try{save();}catch(_){}
+    setTimeout(()=>{let data=null;try{data=localStorage.getItem(KEY);}catch(_){}
+      if(!data){alert('Nothing to save yet.');return;}
+      const who=(document.getElementById('w_name')||{}).value||'';
+      const blob=new Blob([JSON.stringify({app:APP,key:KEY,saved:new Date().toISOString(),data},null,1)],{type:'application/json'});
+      const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+      a.download=`${APP.toLowerCase().replace(/\s+/g,'-')}_${(who||'my-work').replace(/[^\wÀ-ſ-]+/g,'-').slice(0,40)}_${stamp()}.json`;
+      document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+      const o=btn.textContent;btn.textContent='💾 Saved ✓ — check your Downloads';setTimeout(()=>btn.textContent=o,2500);},450);};
+  document.getElementById('openwork').onclick=()=>document.getElementById('workfile').click();
+  document.getElementById('workfile').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+    try{const o=JSON.parse(await f.text());
+      if(!o||o.key!==KEY||typeof o.data!=='string'){alert('This file was saved from a different tool'+(o&&o.app?` (“${o.app}”)`:'')+'. Open it in that tool.');return;}
+      if(!confirm(`Open the work saved on ${new Date(o.saved).toLocaleString()}? It replaces what is on this page now.`))return;
+      localStorage.setItem(KEY,o.data);location.reload();}
+    catch(_){alert('Could not read that file. Choose a file made with “Save my work”.');}
+    finally{e.target.value='';}};
+})();
 </script>
 </body></html>
