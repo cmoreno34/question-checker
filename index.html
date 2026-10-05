@@ -1,0 +1,373 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Question checker</title>
+<meta name="description" content="Estudios de Mercado I · Tema 5.3–5.7 — practise spotting faulty questions, scan your own draft for likely faults, run the launch checklist and an AI pretest.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Archivo:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#f4f2ea;--panel:#fbfaf5;--ink:#17251d;--soft:#4a5a50;--leaf:#2f6b4f;--leaf-ink:#21503b;
+  --clay:#bd5f3f;--line:#ddd8c9;--sage:#e7ece3;--chip:#eef1e8;--shadow:0 1px 2px rgba(23,37,29,.06),0 8px 24px rgba(23,37,29,.06);
+  --ok:#2f7d4f;--okbg:#e3f1e7;--bad:#b4442e;--badbg:#f8e5df;--warn:#9a6a12;--warnbg:#f7eed8;
+  --c1:#3b6fb5;--c2:#2f8f8f;--c3:#c9702f;--c4:#7a6bd0;--c5:#b0487a;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#111713;--panel:#18211b;--ink:#eef1ea;--soft:#a7b7ac;--leaf:#6bbd93;--leaf-ink:#8fd3ac;
+  --clay:#e08a68;--line:#2a352d;--sage:#1e2922;--chip:#212c25;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35);
+  --ok:#7fd3a0;--okbg:#18301f;--bad:#f08f78;--badbg:#3a1e18;--warn:#e9c066;--warnbg:#33290f;
+  --c1:#6ea8e6;--c2:#63c6c6;--c3:#e0a44f;--c4:#b0a6d6;--c5:#e08ab4;}}
+:root[data-theme="dark"]{
+  --ground:#111713;--panel:#18211b;--ink:#eef1ea;--soft:#a7b7ac;--leaf:#6bbd93;--leaf-ink:#8fd3ac;
+  --clay:#e08a68;--line:#2a352d;--sage:#1e2922;--chip:#212c25;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.35);
+  --ok:#7fd3a0;--okbg:#18301f;--bad:#f08f78;--badbg:#3a1e18;--warn:#e9c066;--warnbg:#33290f;
+  --c1:#6ea8e6;--c2:#63c6c6;--c3:#e0a44f;--c4:#b0a6d6;--c5:#e08ab4;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:Archivo,system-ui,sans-serif;line-height:1.55;padding-inline:clamp(16px,4vw,40px)}
+.wrap{max-width:820px;margin:0 auto}
+header{padding-block:30px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.brandline{font:600 12px/1.3 Archivo;letter-spacing:.14em;text-transform:uppercase;color:var(--leaf);margin:0 0 8px}
+h1{font-family:Fraunces,Georgia,serif;font-weight:900;font-size:clamp(26px,5vw,36px);line-height:1.04;margin:0}
+.themebtn{background:var(--panel);border:1px solid var(--line);color:var(--soft);border-radius:999px;padding:6px 13px;font:500 13px Archivo;cursor:pointer}
+nav.suite{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 0;font-size:12.5px}
+nav.suite a{border:1px solid var(--line);border-radius:999px;padding:4px 11px;text-decoration:none;color:var(--soft);background:var(--panel)}
+nav.suite a[aria-current]{background:var(--leaf);color:#fff;border-color:transparent}
+.sub{font-size:14px;color:var(--soft);margin:16px 0 4px}
+.case{background:var(--sage);border:1px solid var(--line);border-radius:14px;padding:15px 18px;margin:14px 0 6px;font-size:14.5px}
+.case b{font-weight:700}.case .q{color:var(--clay);font-weight:700}
+.who{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0 4px}
+.who label{display:flex;flex-direction:column;gap:4px;font:700 10.5px Archivo;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.who input{border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:400 14px Archivo;background:var(--panel);color:var(--ink);min-width:200px}
+.step{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--c,var(--leaf));border-radius:12px;padding:16px 18px;margin:15px 0;box-shadow:var(--shadow)}
+.step h2{font-family:Fraunces,serif;font-weight:900;font-size:19px;margin:0 0 3px;display:flex;align-items:center;gap:10px}
+.step h2 .n{background:var(--c,var(--leaf));color:#fff;width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.step .lead{color:var(--soft);font-size:13px;margin:0 0 12px}
+h3{font:700 13px Archivo;letter-spacing:.05em;text-transform:uppercase;color:var(--soft);margin:16px 0 6px}
+label.fl{display:block;font:700 11px Archivo;letter-spacing:.06em;text-transform:uppercase;margin:10px 0 6px}
+input.txt,textarea,select.txt{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--ground);color:var(--ink);padding:10px 12px;font:400 14px/1.5 Archivo;resize:none}
+select.txt{width:auto;padding:8px 10px}
+textarea{overflow:hidden;min-height:60px}
+textarea.capped{overflow:auto;resize:vertical}
+input.txt:focus,textarea:focus,select.txt:focus{outline:none;border-color:var(--c,var(--leaf))}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.num{width:80px}
+.btn{background:var(--leaf);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:700 14px Archivo;cursor:pointer}
+.btn.sm{padding:6px 11px;font-size:12.5px;border-radius:8px}
+.btn.alt{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+.how{background:var(--sage);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin:4px 0 12px;font-size:13px}
+.how ol,.how ul{margin:6px 0 0;padding-left:20px}.how li{margin:4px 0}.how b{color:var(--leaf-ink)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0}
+.chip{border:1px solid var(--line);background:var(--ground);color:var(--ink);border-radius:999px;padding:6px 12px;font:600 12.5px Archivo;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--c,var(--leaf));border-color:transparent;color:#fff}
+.chip.right{background:var(--ok);color:#fff;border-color:transparent}
+.chip.wrong{background:var(--bad);color:#fff;border-color:transparent}
+.chip:disabled{cursor:default;opacity:.92}
+.fb{border-radius:10px;padding:10px 13px;font-size:13.5px;margin:8px 0 0}
+.fb.ok{background:var(--okbg);color:var(--ink);border:1px solid var(--ok)}
+.fb.no{background:var(--badbg);color:var(--ink);border:1px solid var(--bad)}
+.fb.mid{background:var(--warnbg);color:var(--ink);border:1px solid var(--warn)}
+.card{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:10px 0;background:var(--ground)}
+.card .qtext{font:600 15px/1.45 Archivo;margin:0 0 4px}
+.card .opts{font-size:13px;color:var(--soft);margin:0 0 6px}
+.tag{display:inline-block;font:700 10.5px Archivo;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:2px 7px;margin:0 4px 4px 0}
+.tag.warn{background:var(--warnbg);color:var(--warn)}
+.tag.bad{background:var(--badbg);color:var(--bad)}
+.tag.ok{background:var(--okbg);color:var(--ok)}
+.score{font:700 14px Archivo;color:var(--leaf-ink)}
+.copybtn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:8px 13px;font:600 12.5px Archivo;cursor:pointer;margin-bottom:10px}
+.copybtn:hover{border-color:var(--leaf)}
+pre.prompt{background:#14211b;color:#e8efe6;border-radius:10px;padding:14px;margin:0 0 10px;font:400 12px/1.6 ui-monospace,monospace;white-space:pre-wrap;max-height:420px;overflow:auto}
+.tools2{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.t2{display:flex;flex-direction:column;gap:1px;background:var(--ground);border:1px solid var(--line);border-radius:9px;padding:8px 12px;text-decoration:none;color:var(--ink);font:700 13px Archivo}
+.t2 span{font:500 10.5px Archivo;color:var(--soft)}.t2.main{background:var(--c,var(--leaf));color:#fff;border-color:transparent}.t2.main span{color:rgba(255,255,255,.82)}
+.checks{display:grid;gap:6px;margin:6px 0}
+.checks label{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;cursor:pointer;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--ground)}
+.checks input{margin-top:3px;accent-color:var(--leaf)}
+.checks small{display:block;color:var(--soft);font-size:12px}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:22px 0 6px}
+.pdf{background:var(--clay);color:#fff;border:0;border-radius:10px;padding:13px 24px;font:700 15px Archivo;cursor:pointer}
+.ghost{background:transparent;border:1px solid var(--line);color:var(--soft);border-radius:10px;padding:12px 16px;font:600 13px Archivo;cursor:pointer}
+.saved{font-size:12px;color:var(--soft)}.hint{font-size:12.5px;color:var(--soft);margin:4px 0 0}
+.count{font:700 12.5px Archivo;color:var(--leaf);margin-top:6px;min-height:16px}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.t th{font:700 11px Archivo;letter-spacing:.05em;text-transform:uppercase;color:var(--soft)}
+.tablewrap{overflow-x:auto}
+footer{margin:28px 0 30px;font-size:12px;color:var(--soft);border-top:1px solid var(--line);padding-top:12px}
+.printonly{display:none}
+@media print{
+  header .themebtn,nav.suite,.tools2,.copybtn,pre.prompt,.step .lead,.bar,.how,.btn,.noprint,footer{display:none!important}
+  body{background:#fff;color:#000;padding:0}.step{border:1px solid #bbb;border-left:5px solid #666;break-inside:avoid;box-shadow:none}
+  textarea,input.txt{border-color:#bbb;background:#fff;color:#000}
+  .printonly{display:block;margin-bottom:10px;border-bottom:2px solid #2f6b4f;padding-bottom:6px}
+}
+
+.flag{font-size:13px;margin:3px 0;padding-left:2px}
+.flag b{font-weight:700}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.sum div{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--ground);font-size:12.5px;color:var(--soft)}
+.sum b{display:block;font:900 20px Fraunces,serif;color:var(--ink)}
+.rw{margin-top:8px}
+</style></head>
+<body><div class="wrap">
+<header>
+  <div><p class="brandline">Estudios de Mercado I · Tema 5 · Question wording, biases & pretesting (5.3 · 5.5 · 5.7)</p>
+  <h1>Question checker</h1></div>
+  <button class="themebtn" id="theme">◐ Theme</button>
+</header>
+<nav class="suite" aria-label="Tema 5 tools"><span style="align-self:center;font-weight:700">Tema 5 tools:</span><a href="https://cmoreno34.github.io/scale-studio/">Scale studio</a><a href="https://cmoreno34.github.io/question-checker/" aria-current="page">Question checker</a><a href="https://cmoreno34.github.io/questionnaire-builder/">Questionnaire builder</a></nav>
+<div class="printonly"><div style="font:700 11px Archivo;letter-spacing:.1em;text-transform:uppercase;color:#2f6b4f">Estudios de Mercado I · Tema 5 — Question checker worksheet</div></div>
+
+<p class="sub"><b>A leading question asked of 10,000 people is still leading.</b> Train your eye on faulty questions first, then scan your own draft, tick the launch checklist and run an AI pretest. The scanner <b>flags</b> what may be wrong — <b>you</b> decide whether it is.</p>
+
+<div class="who">
+  <label>Name / group <input id="w_name" placeholder="Group 3 — A. García"></label>
+  <label>Date <input id="w_date" placeholder="dd/mm/yyyy"></label>
+</div>
+
+<div class="step" style="--c:var(--c3)">
+  <h2><span class="n">1</span> Practise — what is wrong with this question?</h2>
+  <p class="lead">Pick the fault. You get the reason and a clean rewrite straight away. The test for every question: <b>could two reasonable people read it differently?</b> and <b>can someone answer honestly without being nudged?</b></p>
+  <div id="quiz"></div>
+  <div class="row"><span class="score" id="qscore"></span><button class="btn sm alt noprint" id="qreset">reset practice</button></div>
+</div>
+
+<div class="step" style="--c:var(--c1)">
+  <h2><span class="n">2</span> Scan your own draft</h2>
+  <p class="lead">Paste the questionnaire: <b>one question per line</b>, with its options on the lines below starting with <code>-</code> (or on the same line after a colon, separated by <code>/</code>). The builder's “Part B” output is already in this format.</p>
+  <div class="row noprint"><button class="btn sm alt" id="example">load an example with faults</button><span class="hint" id="importmsg"></span></div>
+  <label class="fl" for="w_draft">Your draft questionnaire</label>
+  <textarea id="w_draft" class="capped" style="min-height:180px;max-height:460px" placeholder="1. How satisfied are you with the price and quality of our excellent products?&#10;- Satisfied&#10;- Unsatisfied&#10;2. How often do you go to the gym?&#10;- Rarely&#10;- Sometimes&#10;- Often&#10;3. Age: 18-25 / 25-35 / 35+"></textarea>
+  <div class="sum" id="sum"></div>
+  <div id="flags"></div>
+</div>
+
+<div class="step" style="--c:var(--c2)">
+  <h2><span class="n">3</span> The launch checklist (5.6)</h2>
+  <p class="lead">Do not send it until every box is ticked. These are the checks no scanner can make for you.</p>
+  <div class="checks" id="checks"></div>
+</div>
+
+<div class="step" style="--c:var(--c4)">
+  <h2><span class="n">4</span> AI pretest — three passes (5.7)</h2>
+  <p class="lead">The prompt below <b>already includes your draft and the scanner's flags</b>. Add your analysis plan so the AI can check scale ↔ analysis fit too. Paste it into a new chat.</p>
+  <label class="fl" for="w_plan">Your analysis plan (optional, makes the review much better)</label>
+  <textarea id="w_plan" placeholder="e.g. Q3 → mean, compared between first-years and others (t-test). Q5 × Q9 → cross-tab. Q7 → % who use each service."></textarea>
+  <div class="tools2">
+    <a class="t2 main" href="https://claude.ai/new" target="_blank" rel="noopener">Claude<span>claude.ai</span></a>
+    <a class="t2" href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT<span>chatgpt.com</span></a>
+    <a class="t2" href="https://gemini.google.com/app" target="_blank" rel="noopener">Gemini<span>gemini.google.com</span></a>
+  </div>
+  <button class="copybtn" id="copyprompt">copy the pretest prompt (with your draft)</button>
+  <pre class="prompt" id="prompt"></pre>
+  <p class="hint">Then do what no model can: <b>pilot it on 3–5 real people</b> like your respondents and watch where they hesitate. A hesitation is a question to rewrite. AI use must be declared in your report.</p>
+</div>
+
+<div class="step" style="--c:var(--c5)">
+  <h2><span class="n">5</span> What you changed</h2>
+  <p class="lead">You are the methodologist. Which flags were real, which you rejected (and why), what the AI and the pilot changed, and what you cut.</p>
+  <label class="fl" for="w_changes">Changes, with the reason for each</label>
+  <textarea id="w_changes" style="min-height:110px" placeholder="Q1 double-barrelled (price AND quality) → split into Q1a/Q1b. Q2 'often' undefined → 'days per week: 0 / 1–2 / 3–4 / 5+'. Flag on Q6 'and' rejected — 'friends and family' is one group. Cut Q11: no analysis feeds on it. Pilot: 2 of 4 people hesitated on Q8 → reworded."></textarea>
+  <label class="fl" for="w_final">Final count and timed length</label>
+  <input class="txt" id="w_final" placeholder="e.g. 16 questions · 5 min 40 s on a phone (timed by two of us)">
+</div>
+
+<div class="bar">
+  <button class="pdf" id="pdf">⬇ Download PDF</button>
+  <button class="ghost" id="clear">Clear worksheet</button>
+  <span class="saved" id="saved">Saved in this browser</span>
+</div>
+<footer>Estudios de Mercado I · Tema 5 · The scanner uses wording rules, so it raises false alarms and misses things. It is a second pair of eyes, not a verdict.</footer>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const val=id=>{const e=document.getElementById(id);return e?e.value.trim():'';};
+const KEY='em1_t5_question_checker', IMPORT_KEY='em1_t5_to_checker';
+let state={quiz:{},checks:{}};
+
+/* ---------- 1. practice ---------- */
+const FAULTS=['Ambiguous','Undefined scale','Memory reliance','Leading','Double-barrelled','No neutral option','Assumes the answer','Overlapping options','Jargon','Social desirability'];
+const QZ=[
+ {q:'Do you like sport?',o:'Yes / No',a:'Ambiguous',why:'Watching or playing? Which sport? Two people answering “yes” may mean completely different things.',fix:'“Do you play any sport at least once a week?” Yes / No'},
+ {q:'How often do you eat out?',o:'Rarely / Sometimes / Often',a:'Undefined scale',why:'“Often” is twice a month for one person and every day for another — the answers are not comparable.',fix:'“In a normal week, how many times do you eat out? 0 / 1–2 / 3–4 / 5 or more”'},
+ {q:'How many coffees did you buy in the last six months?',o:'___',a:'Memory reliance',why:'Nobody can recall that, so people guess — and the guessing is systematic, not random.',fix:'“On a normal weekday, how many coffees do you buy?”'},
+ {q:'Don’t you agree that our new eco-friendly packaging is a great idea?',o:'Yes / No',a:'Leading',why:'“Don’t you agree”, “eco-friendly”, “great idea” — the wording pushes toward yes.',fix:'“What is your opinion of the new packaging?” 1 Very negative … 5 Very positive'},
+ {q:'How satisfied are you with the price and quality of our products?',o:'1–5',a:'Double-barrelled',why:'Two questions in one: someone happy with quality but not price cannot answer.',fix:'Split it: one question for price, one for quality.'},
+ {q:'How was the delivery?',o:'Good / Bad',a:'No neutral option',why:'People who felt neither are forced to invent an opinion — and two points give no average.',fix:'“How would you rate the delivery?” 1 Very poor … 5 Very good'},
+ {q:'Which streaming service do you pay for?',o:'Netflix / HBO Max / Disney+ / Prime Video',a:'Assumes the answer',why:'Assumes everyone pays for one. Non-payers must tick something false or abandon.',fix:'Add “I don’t pay for any”, or ask a yes/no filter first and skip non-payers.'},
+ {q:'What is your age?',o:'18–25 / 25–35 / 35–45 / 45+',a:'Overlapping options',why:'A 25-year-old fits two boxes; the analysis cannot tell them apart.',fix:'18–24 / 25–34 / 35–44 / 45 or over'},
+ {q:'How would you rate our omnichannel CX touchpoints?',o:'1–5',a:'Jargon',why:'Respondents do not speak marketing. If they do not understand the words, they answer something else.',fix:'“How easy is it to deal with us — in the shop, online and by phone?” (or ask each one separately)'},
+ {q:'Do you always recycle your plastic waste?',o:'Yes / No',a:'Social desirability',why:'Everyone wants to be seen as a recycler, so “yes” is over-reported (and “always” makes it worse).',fix:'“In a typical week, how much of your plastic waste goes in the recycling bin? None / some / about half / most / all”'},
+ {q:'Why did you stop using our app?',o:'[open]',a:'Assumes the answer',why:'Asked of everyone, it assumes they used it and stopped.',fix:'Filter first: “Have you used the app in the last 3 months?” — ask the “why” only to those who stopped.'},
+ {q:'Rate the shop’s atmosphere.',o:'1   2   3   4   5',a:'Undefined scale',why:'Is 1 the best or the worst? With no labels, each respondent invents the rule.',fix:'Label at least the ends: 1 = Very unpleasant … 5 = Very pleasant (better: label every point).'},
+ {q:'Most dentists recommend brushing twice a day. How often do you brush your teeth?',o:'Once / Twice / More',a:'Leading',why:'The preamble tells the respondent the “right” answer before they give it.',fix:'Drop the preamble: “Yesterday, how many times did you brush your teeth?”',also:'Social desirability'},
+ {q:'Would you buy this phone if it were cheaper and had a better camera?',o:'Yes / No',a:'Double-barrelled',why:'Two conditions: you cannot tell whether price or camera drove the answer.',fix:'Ask about each change separately (and expect hypothetical “yes” to overstate real purchase).'},
+ {q:'How much do you enjoy listening to music while studying?',o:'1 Not at all … 5 Very much',a:'Assumes the answer',why:'Assumes the respondent listens to music while studying at all.',fix:'Filter first: “Do you listen to music while studying?” — then ask the enjoyment question to the yeses.'}
+];
+function renderQuiz(){const el=$('#quiz');el.innerHTML='';let right=0,done=0;
+  QZ.forEach((z,i)=>{const ans=state.quiz[i];const card=document.createElement('div');card.className='card';
+    let fb='';if(ans){done++;const ok=ans===z.a||ans===z.also;if(ok)right++;
+      fb=(ok?`<div class="fb ok">✓ <b>${esc(z.a)}</b>${z.also?` (also fair: ${esc(z.also)})`:''}. ${esc(z.why)}`:`<div class="fb no">✗ Not “${esc(ans)}” — it is <b>${esc(z.a)}</b>. ${esc(z.why)}`)+`<div class="rw"><b>Rewrite:</b> ${esc(z.fix)}</div></div>`;}
+    card.innerHTML=`<p class="qtext">${i+1}. ${esc(z.q)}</p><p class="opts">${esc(z.o)}</p><div class="chips">${FAULTS.map(f=>`<button class="chip ${ans?((f===z.a||f===z.also)?'right':(f===ans?'wrong':'')):''}" type="button" data-f="${f}" ${ans?'disabled':''}>${f}</button>`).join('')}</div>${fb}`;
+    card.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{state.quiz[i]=b.dataset.f;renderQuiz();save();});
+    el.appendChild(card);});
+  $('#qscore').textContent=done?`${right} / ${done} right · ${QZ.length-done} to go`:`${QZ.length} questions`;}
+
+/* ---------- 2. scanner ---------- */
+function parse(text){const out=[];let cur=null;
+  String(text||'').replace(/\r/g,'').split('\n').forEach(raw=>{const l=raw.trim();if(!l)return;
+    const isOpt=/^([-•*○□◯▢]|\[ ?\]|\(\s?\)|[a-hA-H][).]\s)/.test(l)||(/^\s{2,}/.test(raw)&&cur);
+    if(isOpt&&cur){cur.opts.push(l.replace(/^([-•*○□◯▢]|\[ ?\]|\(\s?\)|[a-hA-H][).])\s*/,'').trim());return;}
+    if(/^(#|>|```)/.test(l))return;
+    if(/^(section|part|block|intro|introduction|screeners?|warm-?up|body|demographics|close)\b.{0,40}$/i.test(l)&&!/\?/.test(l))return;
+    let q=l.replace(/^(q?\d+[a-z]?[.):]|q\d+\s)\s*/i,'');
+    let opts=[];const m=q.match(/^(.*?[?:])\s*([^?]*\/[^?]*)$/);
+    if(m){q=m[1].trim();opts=m[2].split('/').map(s=>s.trim()).filter(Boolean);}
+    q=q.replace(/\s*\[[^\]]*\]\s*$/,'');
+    cur={q,opts};out.push(cur);});
+  return out;}
+const W=s=>new RegExp('\\b('+s+')\\b','i');
+const RX={
+  leading:W("excellent|amazing|great|wonderful|fantastic|outstanding|superb|terrible|awful|horrible|delicious|beautiful|innovative|revolutionary|eco-friendly|improved|premium|worst|don'?t you|doesn'?t it|wouldn'?t you|isn'?t it|aren'?t you|do you agree|agree that|surely|obviously|clearly|of course|most people|everyone knows|experts?|dentists|doctors"),
+  vague:W("often|rarely|sometimes|regularly|frequently|usually|occasionally|seldom|a lot|a little|recently|normally|several"),
+  memory:/\b(last|past|previous)\s+(year|12 months|twelve months|6 months|six months|semester)\b|\bever\b|\bin your life\b|\bsince\s+(you|20\d\d)/i,
+  absolute:W("always|never|every time|everything|nothing"),
+  jargon:W("omnichannel|touchpoints?|cx|ux|ui|nps|kpi|roi|b2b|b2c|d2c|sku|engagement|synergy|leverage|value proposition|customer journey|usability|brand equity|positioning|conversion|retention|churn"),
+  sensitive:W("income|salary|earn|debt|alcohol|drinks? per|drug|weight|religion|religious|sexual|politic|vote|voting|health condition|loan"),
+  demo:/\b(age|how old|gender|sex|income|salary|education|occupation|nationality|postcode|zip|marital|household)\b/i,
+  assumes:/\b(why did you|why do you|how did you hear|how much do you enjoy|how much did you enjoy|when did you stop|which .{0,30}do you (use|pay|own|prefer)|how often do you use our)\b/i,
+  evalOpt:/\b(good|bad|satisf|unsatisf|dissatisf|agree|disagree|like|dislike|likely|unlikely|happy|unhappy|positive|negative|poor|excellent)/i,
+  neutral:/\b(neither|neutral|undecided|unsure|no opinion|average|indifferent|don'?t know|not sure|ok)\b/i,
+  escape:/\b(other|none|don'?t|do not|not applicable|n\/a|prefer not|no one|nobody|never|i haven'?t|not used)\b/i,
+  negative:/\b(not|never|no|don'?t|doesn'?t|isn'?t|aren'?t|shouldn'?t)\b/i,
+  agreeOpts:/\bagree\b/i
+};
+function ranges(opts){const r=[];opts.forEach(o=>{const s=o.replace(/[.,](?=\d{3})/g,'');let m;
+  if(m=s.match(/(\d+)\s*(?:-|–|—|to)\s*(\d+)/))r.push([+m[1],+m[2],o]);
+  else if(m=s.match(/^(?:under|less than|below|<)\s*(\d+)/i))r.push([-Infinity,+m[1]-(/<|less|under|below/i.test(s)?1:0),o]);
+  else if(m=s.match(/(\d+)\s*(?:\+|or (?:more|over|above)|and (?:over|above))|(?:over|more than|above|>)\s*(\d+)/i)){const v=+(m[1]||m[2]);r.push([m[2]?v+1:v,Infinity,o]);}});
+  return r;}
+function scan(Q){const n=Q.length;return Q.map((x,i)=>{const f=[];const q=x.q,o=x.opts,all=q+' '+o.join(' ');
+  const words=q.split(/\s+/).filter(Boolean).length;
+  const m1=q.match(/\b(and|or)\b|&|\s\/\s/i);
+  if(m1&&!/\b(prefer|which|either|whether|rather)\b/i.test(q)&&!(m1[0].toLowerCase()==='or'&&o.length))f.push(['bad','Double-barrelled?',`“${m1[0].trim()}” in the question — does it ask about two things at once? (Fine if it joins one idea, e.g. “friends and family”.)`]);
+  let m;
+  if(m=all.match(RX.leading))f.push(['bad','Leading / loaded?',`“${m[0]}” may push the answer. Strip loaded words and preambles.`]);
+  if(m=all.match(RX.vague))f.push(['warn','Undefined amount?',`“${m[0]}” means different amounts to different people. Use defined ranges or a time frame.`]);
+  if((m=q.match(RX.memory))&&/\b(how (many|much|often)|number of|times|spend|spent)\b/i.test(q))f.push(['warn','Memory reliance?',`“${m[0]}” — can people really recall that? Shorten the window or ask about a normal week.`]);
+  if(m=q.match(RX.absolute))f.push(['warn','Absolute word?',`“${m[0]}” forces an extreme — few people “always” do anything, so the honest answer is often no.`]);
+  if(m=all.match(RX.jargon))f.push(['warn','Jargon?',`“${m[0]}” — would your respondents use that word? Say it in their language.`]);
+  if(RX.assumes.test(q))f.push(['warn','Assumes the answer?','It presumes something about the respondent. Is there a filter question before it, or an escape option?']);
+  if(RX.negative.test(q)&&o.some(x=>RX.agreeOpts.test(x)))f.push(['warn','Negative statement on an agree scale?','“I do not…” + “Disagree” = a double negative. Fine as a deliberate reversed item — then recode it.']);
+  if(words>25)f.push(['warn','Long question',`${words} words. Long questions get skimmed — especially on a phone.`]);
+  if(o.length===2&&o.every(x=>RX.evalOpt.test(x)))f.push(['bad','Two-point evaluation','Two labels give a split, not a scale: no neutral and no mean. Use a labelled 5- or 7-point scale if you need an average.']);
+  else if(o.length>=3&&o.filter(x=>RX.evalOpt.test(x)).length>=2&&o.length%2===0&&!o.some(x=>RX.neutral.test(x)))f.push(['warn','No neutral point?','An even, evaluative scale forces a side. Do it only on purpose.']);
+  if(o.length>=3&&o.every(x=>/^\d+$/.test(x)))f.push(['warn','Unlabelled numbers','Options are bare numbers — label at least the two ends so 1 means the same to everyone.']);
+  const r=ranges(o).sort((a,b)=>a[0]-b[0]);
+  for(let k=1;k<r.length;k++){if(r[k][0]<=r[k-1][1])f.push(['bad','Overlapping options',`“${r[k-1][2]}” and “${r[k][2]}” overlap — someone fits both.`]);
+    else if(Number.isFinite(r[k-1][1])&&r[k][0]>r[k-1][1]+1)f.push(['warn','Gap in the ranges',`Nothing between ${r[k-1][1]} and ${r[k][0]}.`]);}
+  if(o.length>=3&&!RX.escape.test(o.join(' '))&&!o.some(x=>RX.evalOpt.test(x)||RX.vague.test(x))&&!/\b(rank|points|share|order|rate)\b/i.test(q)&&!o.every(x=>/^[\d\s.,€$%+<>–-]+$/.test(x))&&!ranges(o).length)f.push(['warn','No escape option?','A list with no “Other / None / Prefer not to say” forces anyone it does not fit into a false answer.']);
+  if(RX.demo.test(q)&&i<Math.floor(n*0.7)&&i>1)f.push(['warn','Demographic before the end?','Demographics feel intrusive up front — move them last, unless this one is a screener.']);
+  if(RX.sensitive.test(q)&&i<Math.floor(n/3))f.push(['warn','Sensitive question early?','Ask sensitive questions late (but before demographics), when the respondent is invested — and promise anonymity.']);
+  if(!o.length&&!/\b(what|why|how|describe|explain|tell|anything)\b/i.test(q.split(/\s+/).slice(0,3).join(' '))&&!/[_]{2,}/.test(q))f.push(['warn','No options found','If this is a closed question, list the options under it (lines starting with “-”).']);
+  return f;});}
+function estSecs(Q){return Q.reduce((s,x)=>s+(x.opts.length?(x.opts.length>6?10:7):(/\b(why|describe|explain|anything else|what)\b/i.test(x.q)?30:9)),0);}
+function renderScan(){const Q=parse(val('w_draft'));const F=scan(Q);const el=$('#flags');
+  if(!Q.length){el.innerHTML='';$('#sum').innerHTML='';refreshPrompt();return;}
+  const nf=F.reduce((s,f)=>s+f.length,0),clean=F.filter(f=>!f.length).length,s=estSecs(Q);
+  $('#sum').innerHTML=`<div><b>${Q.length}</b>questions found</div><div><b>${nf}</b>possible faults</div><div><b>${clean}</b>with no flag</div><div><b>~${Math.max(1,Math.round(s/60))} min</b>rough length — time it yourself on a phone</div>`;
+  el.innerHTML=Q.map((x,i)=>`<div class="card"><p class="qtext">${i+1}. ${esc(x.q)}</p>${x.opts.length?`<p class="opts">${x.opts.map(esc).join(' · ')}</p>`:''}${F[i].length?F[i].map(([k,t,d])=>`<div class="flag"><span class="tag ${k}">${esc(t)}</span>${esc(d)}</div>`).join(''):`<span class="tag ok">no flag</span><span class="hint"> — still read it with the two-question test</span>`}</div>`).join('');
+  refreshPrompt();}
+
+/* ---------- 3. checklist ---------- */
+const CHECKS=[
+ ['Every question passes the two-question test','No question can be read two ways or nudges the answer.'],
+ ['No double-barrelled questions','Each asks exactly one thing.'],
+ ['Every scale is defined','No “rarely / often”: ranges or fully labelled scales instead.'],
+ ['Every question earns its place','You can name the table or chart each one feeds. If not, cut it.'],
+ ['Option order is randomised','Wherever order is not meaningful (5.5 — primacy bias).'],
+ ['Two or three items are reverse-worded','Catches acquiescence and doubles as an attention check.'],
+ ['Screeners first, demographics last','Sensitive questions late, after the respondent is invested.'],
+ ['Every list has an escape option','“Other / None / Prefer not to say” where the list may not fit everyone.'],
+ ['The introduction says who, why, how long and what happens to the data','Consent — and an honest time estimate drives completion.'],
+ ['Piloted on 3–5 people like your respondents','Someone answered it without asking you what a question meant.'],
+ ['Taken on a phone and timed','The estimate in the introduction matches reality.']];
+function renderChecks(){$('#checks').innerHTML=CHECKS.map((c,i)=>`<label><input type="checkbox" data-i="${i}" ${state.checks[i]?'checked':''}><span><b>${esc(c[0])}</b><small>${esc(c[1])}</small></span></label>`).join('');
+  $('#checks').querySelectorAll('input').forEach(b=>b.onchange=()=>{state.checks[b.dataset.i]=b.checked;save();refreshPrompt();});}
+
+/* ---------- 4. prompt ---------- */
+function buildPrompt(){const Q=parse(val('w_draft'));const F=scan(Q);
+  const draft=val('w_draft')||'[PASTE YOUR DRAFT QUESTIONNAIRE IN STEP 2 FIRST]';
+  const flags=F.map((f,i)=>f.length?`Q${i+1}: ${f.map(x=>x[1].replace('?','')).join('; ')}`:'').filter(Boolean).join('\n');
+  const plan=val('w_plan');
+  return `Act as a survey methodologist pretesting a student marketing-research questionnaire before fieldwork.
+
+MY DRAFT QUESTIONNAIRE:
+"""
+${draft}
+"""
+${flags?`\nAn automatic wording scan raised these POSSIBLE faults (some may be false alarms — confirm or reject each):\n${flags}\n`:''}${plan?`\nMY ANALYSIS PLAN:\n${plan}\n`:''}
+Run THREE separate passes and label them clearly:
+
+PASS 1 — WORDING (one row per question). Name the fault if any — ambiguous, undefined scale, memory reliance, leading/loaded, double-barrelled, no neutral option, assumes the answer, overlapping options, jargon — and give a clean rewrite. If a question is fine, say “OK”. Present it as a table: Q# | Fault | Why it poisons the data | Rewrite.
+
+PASS 2 — RESPONSE BIAS AND STRUCTURE. Flag where acquiescence, social desirability, question-order or option-order effects, straightlining or extreme/central tendency could distort answers, and give the specific defence (reverse-word an item, anonymity, randomise options, rotate blocks, attention check, shorter grid). Check the order: introduction → screeners → warm-up → body grouped by topic → sensitive → demographics → close.${plan?' Then check SCALE ↔ ANALYSIS FIT: for every question in my analysis plan, say whether its scale supports that analysis, and what to change if not.':' Then say, for each question, which level of measurement it produces (nominal/ordinal/interval/ratio) and which analysis that allows.'}
+
+PASS 3 — PERSONA PRETEST. Invent three realistic, different respondents from the target audience (include one the survey does not fit well). Have each answer the questionnaire and report exactly where they hesitate, misread, cannot answer honestly or would abandon.
+
+THEN: list the questions I should CUT because no analysis feeds on them, and give me a corrected, ready-to-field version, one question per line with options on lines starting with "- ".
+
+Rules: change only what is broken and keep my meaning. Do not predict real response percentages — simulated respondents test the instrument, not the market. Do not invent data.`;}
+function refreshPrompt(){$('#prompt').textContent=buildPrompt();}
+
+/* ---------- persistence ---------- */
+const EXAMPLE=`1. How satisfied are you with the price and quality of our excellent gym?
+- Satisfied
+- Unsatisfied
+2. What is your annual income?
+- Under 20,000 €
+- 20,000–40,000 €
+- 40,000–60,000 €
+- 60,000 € or more
+3. How often do you go to the gym?
+- Rarely
+- Sometimes
+- Often
+4. Which class do you attend? Spinning / Yoga / Pilates / CrossFit
+5. How many times did you skip a workout in the last year?
+6. Don't you agree that our new opening hours are more convenient?
+- Yes
+- No
+7. Age: 16-20 / 20-25 / 25-30 / 35+
+8. Why did you choose our gym over the others?
+9. How would you rate our customer journey touchpoints?
+- 1
+- 2
+- 3
+- 4
+- 5
+10. Anything else you would like to tell us?`;
+const ids=['w_name','w_date','w_draft','w_plan','w_changes','w_final'];
+let st;function save(){clearTimeout(st);st=setTimeout(()=>{const o={state};ids.forEach(i=>o[i]=val(i));
+  try{localStorage.setItem(KEY,JSON.stringify(o));$('#saved').textContent='Saved ✓ '+new Date().toLocaleTimeString();}catch(_){}} ,300);}
+function autogrow(t){if(t.classList.contains('capped'))return;t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px';}
+let scanT;
+(function init(){let s={};try{s=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(_){}
+  if(s.state)state=Object.assign(state,s.state);
+  ids.forEach(i=>{const el=document.getElementById(i);el.value=s[i]||'';el.addEventListener('input',()=>{if(el.tagName==='TEXTAREA')autogrow(el);save();
+    if(i==='w_draft'){clearTimeout(scanT);scanT=setTimeout(renderScan,250);}if(i==='w_plan')refreshPrompt();});if(el.tagName==='TEXTAREA')autogrow(el);});
+  let imp=null;try{imp=localStorage.getItem(IMPORT_KEY);}catch(_){}
+  if(imp){const d=$('#w_draft');if(!d.value.trim()||confirm('Replace the draft in step 2 with the questionnaire sent from the builder?')){d.value=imp;$('#importmsg').textContent='✓ Questionnaire received from the builder.';save();}try{localStorage.removeItem(IMPORT_KEY);}catch(_){}}
+  renderQuiz();renderChecks();renderScan();})();
+$('#example').onclick=()=>{const d=$('#w_draft');if(d.value.trim()&&!confirm('Replace your draft with the example?'))return;d.value=EXAMPLE;save();renderScan();};
+$('#qreset').onclick=()=>{state.quiz={};renderQuiz();save();};
+function copy(text,btn){const o=btn.textContent;const ok=()=>{btn.textContent='copied ✓';setTimeout(()=>btn.textContent=o,1200);};
+  const fb=()=>{try{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.top='-1000px';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);ok();}catch(_){btn.textContent='Ctrl+C';}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok).catch(fb);}else{fb();}}
+$('#copyprompt').onclick=e=>copy(buildPrompt(),e.currentTarget);
+$('#pdf').onclick=()=>{if(!val('w_date'))$('#w_date').value=new Date().toLocaleDateString();window.print();};
+$('#clear').onclick=()=>{if(confirm('Clear the worksheet? Download your PDF first if you need it.')){try{localStorage.removeItem(KEY);}catch(_){}location.reload();}};
+const root=document.documentElement;$('#theme').onclick=()=>{const c=root.getAttribute('data-theme');root.setAttribute('data-theme',c==='dark'?'light':c==='light'?'dark':(matchMedia('(prefers-color-scheme:dark)').matches?'light':'dark'));};
+</script>
+</body></html>
